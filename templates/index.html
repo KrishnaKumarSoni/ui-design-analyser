@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze UI Design & Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Analyse UI</h1>
+        <form id="apiKeyForm">
+            <label for="apiKey">Enter Open AI API Key</label>
+            <div class="input-group">
+                <input type="password" id="apiKey" name="apiKey" required>
+                <span id="apiKeyStatus" class="connected" style="display: none;">connected</span>
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+
+        <form id="analyzeForm" style="display: none;">
+            <label for="url">Enter Website URL</label>
+            <div class="input-group">
+                <input type="url" id="url" name="url" required>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="report" class="report"></div>
+    </div>
+
+    <script>
+        document.getElementById('apiKeyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const apiKey = document.getElementById('apiKey').value;
+            const response = await fetch('/validate-key', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ api_key: apiKey })
+            });
+            const data = await response.json();
+            if (data.status === 'valid') {
+                localStorage.setItem('openai_api_key', apiKey);
+                document.getElementById('apiKeyStatus').style.display = 'inline';
+                document.getElementById('analyzeForm').style.display = 'block';
+            } else {
+                alert('Invalid API Key: ' + data.error);
+            }
+        });
+
+        document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const apiKey = localStorage.getItem('openai_api_key');
+            const url = document.getElementById('url').value;
+
+            // Clear previous content and error messages
+            document.getElementById('report').innerHTML = '';
+            document.getElementById('errorMessage').innerText = '';
+
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ api_key: apiKey, url: url })
+            });
+            const data = await response.json();
+            if (data.error) {
+                document.getElementById('errorMessage').innerText = 'Error: ' + data.error;
+            } else {
+                const markdown = data.markdown_content;
+                document.getElementById('report').innerHTML = marked.parse(markdown);  // Use marked.parse() instead of marked()
+            }
+        });
+    </script>
+</body>
+</html>
