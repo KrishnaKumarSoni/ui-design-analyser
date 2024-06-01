@@ -2,7 +2,7 @@ import re
 import os
 import time
 import logging
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import openai
@@ -18,12 +18,16 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Needed for session management
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # OpenAI API Key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Global variable to store progress
+task_progress = 0
 
 # Route to render the main HTML page
 @app.route('/')
@@ -44,6 +48,8 @@ def validate_key():
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
+    global task_progress
+    task_progress = 0
     data = request.json
     url = data['url']
     api_key = data['api_key']
@@ -52,13 +58,22 @@ def analyze():
     try:
         openai.api_key = api_key
         # Capture screenshot and HTML content
+        task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
         
+        task_progress = 30  # Update progress after capturing the screenshot
+        
         # Perform analysis
+        task_progress = 50
         analysis_results = perform_analysis(screenshot_path, html_content)
         
+        task_progress = 80  # Update progress after analysis completion
+        
         # Convert to markdown
+        task_progress = 90
         markdown_content = convert_to_markdown(analysis_results)
+        
+        task_progress = 100
         
         logging.info(markdown_content)
 
@@ -71,6 +86,10 @@ def analyze():
         logging.error(f"Error during analysis: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/progress', methods=['GET'])
+def progress():
+    global task_progress
+    return jsonify({'progress': task_progress})
 
 def capture_screenshot(url):
     """
@@ -108,7 +127,6 @@ def capture_screenshot(url):
     logging.info(f"Screenshot captured: {screenshot_path}")
     return screenshot_path, html_content
 
-
 def encode_image(image_path):
     """
     Encodes an image to base64.
@@ -119,8 +137,6 @@ def encode_image(image_path):
     """
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
-
-
 
 def perform_analysis(screenshot_path, html_content):
     """
@@ -144,8 +160,6 @@ def perform_analysis(screenshot_path, html_content):
         'gpt4_analysis': gpt4_analysis_results,
         'gpt4o_vision_analysis': gpt4o_vision_results
     }
-
-
 
 def analyze_with_gpt4o_vision(image_path, business_goal):
     """
@@ -206,7 +220,6 @@ def analyze_with_gpt4o_vision(image_path, business_goal):
     else:
         logging.error(f"Error in GPT-4o Vision API: {response.text}")
         return {"error": response.text}
-
 
 def analyze_content_sentiment_gpt4(html_content):
     """
@@ -280,8 +293,6 @@ def analyze_content_sentiment_gpt4(html_content):
         logging.error(f"Error in GPT-4 API: {response.text}")
         return {"error": response.text}
 
-
-
 def extract_json_from_response(response_text):
     """
     Extracts JSON data from the GPT response text.
@@ -304,8 +315,7 @@ def extract_json_from_response(response_text):
         return parsed_data
     else:
         return {"error": "No valid JSON found"}
-
-
+    
 
 def convert_to_markdown(data):
     markdown = []
@@ -338,8 +348,5 @@ def convert_to_markdown(data):
 
     return "\n".join(markdown)
 
-
 if __name__ == '__main__':
     app.run(debug=True)
-
-
