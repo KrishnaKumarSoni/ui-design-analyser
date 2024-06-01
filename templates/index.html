@@ -7,26 +7,49 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .progress-bar {
+            display: none;
+            width: 100%;
+            background-color: #f3f3f3;
+        }
+
+        .progress-bar-inner {
+            width: 0;
+            height: 5px;
+            background-color: #4caf50;
+            transition: width 0.4s ease;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Analyse UI</h1>
         <form id="apiKeyForm">
-            <label for="apiKey">Enter Open AI API Key</label>
+            <label for="apiKey">
+                Enter Open AI API Key
+                <div id="apiKeyStatus" class="connected" style="display: none;">connected</div>
+            </label>
+            
             <div class="input-group">
                 <input type="password" id="apiKey" name="apiKey" required>
-                <span id="apiKeyStatus" class="connected" style="display: none;">connected</span>
+                <div style="width: 20px; height: 20px;"></div>
+                <input type="submit" value="Submit">
             </div>
-            <input type="submit" value="Submit">
         </form>
 
         <form id="analyzeForm" style="display: none;">
             <label for="url">Enter Website URL</label>
             <div class="input-group">
                 <input type="url" id="url" name="url" required>
+                <div style="width: 20px; height: 20px;"></div>
                 <button type="submit">Submit</button>
             </div>
         </form>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-bar-inner" id="progressBarInner"></div>
+        </div>
 
         <div id="errorMessage" class="error-message"></div>
         <div id="report" class="report"></div>
@@ -58,6 +81,26 @@
             const apiKey = localStorage.getItem('openai_api_key');
             const url = document.getElementById('url').value;
 
+            // Show the progress bar
+            const progressBar = document.getElementById('progressBar');
+            const progressBarInner = document.getElementById('progressBarInner');
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '0%';
+
+            // Function to update progress
+            const updateProgress = async () => {
+                const response = await fetch('/progress');
+                const data = await response.json();
+                progressBarInner.style.width = data.progress + '%';
+
+                if (data.progress < 100) {
+                    setTimeout(updateProgress, 300); // Poll every 300ms
+                }
+            };
+
+            // Start updating progress
+            updateProgress();
+
             // Clear previous content and error messages
             document.getElementById('report').innerHTML = '';
             document.getElementById('errorMessage').innerText = '';
@@ -70,12 +113,17 @@
                 body: JSON.stringify({ api_key: apiKey, url: url })
             });
             const data = await response.json();
+
             if (data.error) {
                 document.getElementById('errorMessage').innerText = 'Error: ' + data.error;
             } else {
                 const markdown = data.markdown_content;
                 document.getElementById('report').innerHTML = marked.parse(markdown);  // Use marked.parse() instead of marked()
             }
+
+            // Hide the progress bar
+            progressBarInner.style.width = 0
+            progressBar.style.display = 'none';
         });
     </script>
 </body>

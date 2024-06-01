@@ -59,14 +59,14 @@ input[type="submit"], button[type="submit"] {
     border: none;
     cursor: pointer;
     border-radius: 8px;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 400;
 }
-
+/* 
 button[type="submit"] {
     width: 192px;
     margin-left: 10px;
-}
+} */
 
 .connected {
     background-color: #d4edda;
@@ -75,10 +75,8 @@ button[type="submit"] {
     border-radius: 8px;
     margin-left: 10px;
     font-size: 16px;
-    font-weight: 600;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    font-weight: 400;
+    display: inline-block; 
 }
 
 .error-message {
