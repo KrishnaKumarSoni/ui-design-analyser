@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import json
 # from newspaper import Article
 
+
 # Load environment variables from .env file
 load_dotenv()
 
