@@ -16,7 +16,7 @@ import json
 # from newspaper import Article
 
 
-# Load environment variables from .env file
+# Load environment variables from .env 
 load_dotenv()
 
 # Initialize Flask app
