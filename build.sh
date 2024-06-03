@@ -1,3 +1,6 @@
+# Create the build.sh script
+echo 'Creating build.sh script'
+cat <<EOL > build.sh
 #!/bin/bash
 set -e
 
@@ -13,3 +16,7 @@ chmod +x bin/chrome
 wget -q https://storage.googleapis.com/chrome-for-testing/125.0.6422.141/linux64/chromedriver-linux64.zip -O /tmp/chromedriver-linux64.zip
 unzip /tmp/chromedriver-linux64.zip -d bin/
 chmod +x bin/chromedriver
+EOL
+
+# Make the script executable
+chmod +x build.sh
