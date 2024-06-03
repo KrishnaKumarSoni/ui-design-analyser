@@ -56,7 +56,7 @@ def analyze():
     data = request.json
     url = data['url']
     api_key = data['api_key']
-    logging.info(f"Received URL for analysis: {url}")
+    logging.info(f"Received URL: {url}")
 
     try:
         openai.api_key = api_key
