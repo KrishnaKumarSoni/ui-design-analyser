@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import requests
 from dotenv import load_dotenv
 import json
-from newspaper import Article
+# from newspaper import Article
 
 # Load environment variables from .env file
 load_dotenv()
@@ -237,15 +237,16 @@ def analyze_content_sentiment_gpt4(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     
     # Extract main content using Newspaper3k
-    article = Article('')
-    article.set_html(html_content)
-    article.parse()
-    article.nlp()
-    text_content_newspaper = article.text
+    # article = Article('')
+    # article.set_html(html_content)
+    # article.parse()
+    # article.nlp()
+    # text_content_newspaper = article.text
 
     # Extract additional structured text using BeautifulSoup
     text_content_soup = ' '.join([p.get_text() for p in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])])
-    combined_text_content = text_content_soup + " " + text_content_newspaper
+    # combined_text_content = text_content_soup + " " + text_content_newspaper
+    combined_text_content = text_content_soup
 
     prompt = f"""
     Understand the content and define the business objective for the content. 
