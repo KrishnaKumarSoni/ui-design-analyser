@@ -348,5 +348,3 @@ def convert_to_markdown(data):
 
     return "\n".join(markdown)
 
-if __name__ == '__main__':
-    app.run(debug=True)
