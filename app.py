@@ -107,10 +107,13 @@ def capture_screenshot(url):
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.binary_location = os.path.join(os.getcwd(), "bin", "chrome")
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-    driver.set_window_size(1920, 1080)  # Set to a large resolution to load the desktop version
+    service = Service(os.path.join(os.getcwd(), "bin", "chromedriver"))
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver.set_window_size(1920, 1080)
     driver.get(url)
+    time.sleep(2)
     
     # Allow time for the page to fully render
     time.sleep(2)
