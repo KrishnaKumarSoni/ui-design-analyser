@@ -12,9 +12,5 @@
             "src":"/(.*)",
             "dest":"/"
         }
-    ],
-    "files": [
-        "bin/chrome",
-        "bin/chromedriver"
     ]
 }
