@@ -114,9 +114,6 @@ def capture_screenshot(url):
     driver.set_window_size(1920, 1080)
     driver.get(url)
     time.sleep(2)
-    
-    # Allow time for the page to fully render
-    time.sleep(2)
 
     # Adjust window size to capture the full height
     total_height = driver.execute_script("return document.body.scrollHeight")
