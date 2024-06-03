@@ -1,4 +1,4 @@
-numpy @ file:///private/tmp/numpy-20240206-5694-3lh52k/numpy-1.26.4
+numpy==1.26.4
 openvino==2024.0.0
 packaging==24.0
 TBB==0.2
