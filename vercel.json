@@ -15,7 +15,5 @@
             "dest":"/"
         }
     ],
-    "hooks": {
-      "build": "sh build.sh"
-    }
+    "buildCommand": "sh build.sh"
 }
