@@ -2,4 +2,4 @@
 
 # Install Playwright and the necessary browser binaries
 pip install playwright
-playwright install
+python -m playwright install
