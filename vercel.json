@@ -14,5 +14,8 @@
             "src":"/(.*)",
             "dest":"/"
         }
-    ]
+    ],
+    "hooks": {
+      "build": "sh build.sh"
+    }
 }
