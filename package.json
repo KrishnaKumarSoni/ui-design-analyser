@@ -2,7 +2,7 @@
     "name": "ui-design-analyser",
     "version": "1.0.0",
     "scripts": {
-      "postinstall": "playwright install"
-    }
+        "postinstall": "playwright install --with-deps chromium"
+      }
   }
   
