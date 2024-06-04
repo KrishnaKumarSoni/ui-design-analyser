@@ -5,8 +5,7 @@
             "src":"./index.py",
             "use": "@vercel/python",
             "config":{
-                "runtime":"python3.9",
-                "buildCommand": "sh build.sh"
+                "runtime":"python3.9"
             }
         }
     ],
