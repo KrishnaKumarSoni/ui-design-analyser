@@ -15,8 +15,6 @@ from dotenv import load_dotenv
 import json
 # from newspaper import Article
 
-CHROME_PATH = os.path.join(os.getcwd(), "bin", "chrome")
-CHROMEDRIVER_PATH = os.path.join(os.getcwd(), "bin", "chromedriver")
 
 # Load environment variables from .env file
 load_dotenv()
@@ -110,10 +108,9 @@ def capture_screenshot(url):
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.binary_location = CHROME_PATH
 
-    service = Service(CHROMEDRIVER_PATH)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    driver = webdriver.Chrome(options=chrome_options)
     driver.set_window_size(1920, 1080)
     driver.get(url)
     time.sleep(2)
