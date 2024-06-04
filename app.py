@@ -3,10 +3,7 @@ import os
 import time
 import logging
 from flask import Flask, request, jsonify, render_template, session
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
+from playwright.sync_api import sync_playwright
 import openai
 import base64
 from bs4 import BeautifulSoup
@@ -103,28 +100,22 @@ def capture_screenshot(url):
         tuple: Path to the saved screenshot and the HTML content.
     """
 
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-
-
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.set_window_size(1920, 1080)
-    driver.get(url)
-    time.sleep(2)
-
-    # Adjust window size to capture the full height
-    total_height = driver.execute_script("return document.body.scrollHeight")
-    driver.set_window_size(1920, total_height)
-    
-    time.sleep(2)  # Allow time for the page to re-render if necessary
     screenshot_path = 'screenshot.png'
-    driver.save_screenshot(screenshot_path)
 
-    html_content = driver.page_source
-    driver.quit()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(url)
+        page.wait_for_timeout(2000)  # Wait for 2 seconds for the page to load completely
+        page.set_viewport_size({"width": 1920, "height": 1080})
+
+        total_height = page.evaluate("document.body.scrollHeight")
+        page.set_viewport_size({"width": 1920, "height": total_height})
+        page.wait_for_timeout(2000)  # Wait for 2 seconds for the page to re-render if necessary
+
+        page.screenshot(path=screenshot_path, full_page=True)
+        html_content = page.content()
+        browser.close()
 
     logging.info(f"Screenshot captured: {screenshot_path}")
     return screenshot_path, html_content
