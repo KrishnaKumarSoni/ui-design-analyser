@@ -106,12 +106,12 @@ def capture_screenshot(url):
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(url)
-        page.wait_for_timeout(2000)  # Wait for 2 seconds for the page to load completely
+        page.wait_for_timeout(2000)
         page.set_viewport_size({"width": 1920, "height": 1080})
 
         total_height = page.evaluate("document.body.scrollHeight")
         page.set_viewport_size({"width": 1920, "height": total_height})
-        page.wait_for_timeout(2000)  # Wait for 2 seconds for the page to re-render if necessary
+        page.wait_for_timeout(2000)
 
         page.screenshot(path=screenshot_path, full_page=True)
         html_content = page.content()
