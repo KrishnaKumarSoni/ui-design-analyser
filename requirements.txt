@@ -10,7 +10,7 @@ regex==2024.5.15
 requests==2.32.3
 requests-file==2.1.0
 # selenium==4.21.0
-playwright
+playwright==1.17.0
 setuptools==70.0.0
 soupsieve==2.5
 urllib3==2.2.1
