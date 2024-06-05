@@ -333,15 +333,7 @@ def convert_to_markdown(data):
 
     return "\n".join(markdown)
 
-def kill_port(port):
-    process = subprocess.Popen(["lsof", "-i", f":{port}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    for line in stdout.splitlines():
-        if b'LISTEN' in line:
-            pid = int(line.split()[1])
-            os.kill(pid, signal.SIGKILL)
 
-kill_port(5000)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
