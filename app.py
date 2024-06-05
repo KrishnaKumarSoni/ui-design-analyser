@@ -1,6 +1,7 @@
 import re
 import os
-import time
+import signal
+import subprocess
 import logging
 from flask import Flask, request, jsonify, render_template, session
 from playwright.sync_api import sync_playwright
@@ -10,7 +11,6 @@ from bs4 import BeautifulSoup
 import requests
 from dotenv import load_dotenv
 import json
-# from newspaper import Article
 
 
 # Load environment variables from .env file
@@ -92,21 +92,12 @@ def progress():
     return jsonify({'progress': task_progress})
 
 def capture_screenshot(url):
-    """
-    Captures a full-page screenshot of the provided URL and returns the HTML content.
-    Args:
-        url (str): URL of the web page to capture.
-    Returns:
-        tuple: Path to the saved screenshot and the HTML content.
-    """
-
     screenshot_path = 'screenshot.png'
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(url)
-        page.wait_for_timeout(2000)
         page.set_viewport_size({"width": 1920, "height": 1080})
 
         total_height = page.evaluate("document.body.scrollHeight")
@@ -341,4 +332,17 @@ def convert_to_markdown(data):
             markdown.append(gpt4o_vision_data)
 
     return "\n".join(markdown)
+
+def kill_port(port):
+    process = subprocess.Popen(["lsof", "-i", f":{port}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    for line in stdout.splitlines():
+        if b'LISTEN' in line:
+            pid = int(line.split()[1])
+            os.kill(pid, signal.SIGKILL)
+
+kill_port(7000)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=7000)
 
