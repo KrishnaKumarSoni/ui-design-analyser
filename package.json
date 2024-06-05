@@ -1,8 +1,13 @@
 {
     "name": "ui-design-analyser",
     "version": "1.0.0",
+    "description": "ui design analyser",
+    "main": "app.js",
     "scripts": {
-        "postinstall": "playwright install --with-deps chromium"
-      }
+      "postinstall": "playwright install"
+    },
+    "dependencies": {
+      "playwright": "^1.16.0"
+    }
   }
   
