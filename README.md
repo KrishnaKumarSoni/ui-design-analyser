@@ -42,15 +42,6 @@ This project is a Flask-based web application for analyzing web pages. It captur
 
     The analysis results will be displayed and available for download in Markdown format.
 
-6. **Project Structure**
-    web-page-analysis-tool/
-    ├── app.py                  # Main application file
-    ├── requirements.txt        # Python dependencies
-    ├── templates/
-    │   └── index.html          # HTML template for the main page
-
-6. **Contributing**
-    Contributions are welcome! Please feel free to submit a Pull Request.
 
 # Bounty for Deployment Assistance
 
